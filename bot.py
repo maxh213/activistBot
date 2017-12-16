@@ -1,6 +1,6 @@
 import tweepy
 from random import *
-import re
+from status_count import Status_count
 
 class Bot:
 
@@ -12,7 +12,7 @@ class Bot:
 
 	def follow_back_all_followers(self):
 		for follower in tweepy.Cursor(self.api.followers).items():
-			if not follower.following:
+			if not follower.following and not follower.protected:
 				follower.follow()
 				print ("Just followed: ", follower.screen_name)
 
@@ -32,39 +32,38 @@ class Bot:
 				self.api.create_favorite(status.id)
 				print ("Favourited: '", status.text, "' from the user: ", status.user.screen_name)
 
-	def steal_popular_tweets_from_search(self, query, tweet_frequency):
-		'''
-			TODO:
-			-Refactor this
-			-check that the same thing isn't tweeted twice
-			-create a campaign object
-			-create a target object
-			-create a trusted retweet/favourite list
-			-throw it on the server
-			-add generic interests
-		'''
-		status_counts = []
-		for searchResult in self.api.search(query, tweet_mode="extended"):
-			text = re.sub(r'http\S+', '', searchResult.full_text)
-			added = False
-			for status_count in status_counts:
-				if status_count[0] == text:
-					status_count[1] += 1
-					added = True
-			if not added:
-				status_counts.append([text, 1, searchResult.full_text, searchResult.in_reply_to_status_id])
-		for status_count in status_counts:
-			if status_count[1] > tweet_frequency:
-				try:
-					self.api.update_status(status_count[2], in_reply_to_status_id=status_count[3])
-					print("Tweeted: '", status_count[2], "'")
-					if status_count[3]:
-						print("In reply to: '", self.api.get_status(status_count[3].text) ,"'")
-				except:
-					pass
-					#already tweeted it probably
-		return self.api.search("#notsonoble")[0]
-
 	def should_do_action_based_on_probablity(self, probability):
 		result = uniform(0, 1)
 		return result <= probability
+
+	def steal_popular_tweets_from_search(self, query, tweet_frequency):
+		status_counts = self.get_counts_of_popular_tweets(query)
+		for status_count in status_counts:
+			if status_count.get_count() > tweet_frequency:
+				self.steal_tweet(status_count)
+
+	def steal_tweet(self, status_count):
+		try:
+			self.api.update_status(status_count.get_full_text(), in_reply_to_status_id=status_count.get_in_reply_to_status_id)
+			print("Tweeted: '", status_count.get_full_text(), "'")
+			if status_count.is_the_status_a_reply:
+				print("In reply to: '", self.api.get_status(status_count.get_in_reply_to_status_id().text) ,"'")
+		except:
+			pass
+			#probs already tweeted this tweet
+			#it's a pain to check through all your tweets to see if you've tweeted it before btw
+
+	def get_counts_of_popular_tweets(self, query):
+		status_counts = []
+		for searchResult in self.api.search(query, tweet_mode="extended"):
+			new_status_count = Status_count(self.api, searchResult.full_text, searchResult.full_text, searchResult.in_reply_to_status_id)
+			if not self.does_new_status_count_exist_in_status_counts(new_status_count, status_counts):
+				status_counts.append(new_status_count)
+		return status_counts
+
+	def does_new_status_count_exist_in_status_counts(self, new_status_count, status_counts):
+		for status_count in status_counts:
+			if status_count.get_match_text() == new_status_count.get_match_text():
+				status_count.increment_count()
+				return True
+		return False
