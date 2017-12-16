@@ -39,6 +39,7 @@ class Bot:
 			-check that the same thing isn't tweeted twice
 			-create a campaign object
 			-create a target object
+			-create a trusted retweet/favourite list
 			-throw it on the server
 			-add generic interests
 		'''
