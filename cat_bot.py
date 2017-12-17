@@ -8,7 +8,7 @@ class Cat_bot:
 		self.filename = "tmpcat"
 		self.directory = "tmp/cats/"
 		self.adjectives = [
-			"adorable"
+			"adorable",
 			"adorbs",
 			"lovable",  
 			"charming", 
@@ -29,7 +29,7 @@ class Cat_bot:
 			"distinguished",
 			"grand",
 			"fluffy",
-			"stupidly fluffy"
+			"stupidly fluffy",
 			"furball"
 		]
 		
