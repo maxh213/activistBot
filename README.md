@@ -10,3 +10,4 @@ kind of an experiment in passing a turing test but also helping out animals at t
 * create a target object
 * improve sentence structure on the cat images
 * add generic interests and make it tweet / steal tweets about them
+* double check the in reply to functionality

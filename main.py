@@ -15,26 +15,36 @@ def main():
 	bot_configs = Bot_configs(consumer_key, consumer_key_secret, access_token, access_token_secret)
 	bot, cat_bot = create_bots(bot_configs)
 
+
+
 def run_on_server():
 	print("Starting Bot...")
 	bot_configs = Bot_configs(consumer_key, consumer_key_secret, access_token, access_token_secret)
 	bot, cat_bot = create_bots(bot_configs)
+	bot_functions = get_bot_functions(bot, cat_bot)
+	search_terms = get_search_terms()
 	print("Successfully created the bots...")
+
 	while (True):
 		bot.follow_back_all_followers()
-		cat_bot.tweet_cat_image()
-		bot.steal_popular_tweets_from_search("#notsonoble", 1)
+		random.choice(bot_functions)(random.choice(search_terms))
 		sleep_until_next_action()
-		bot.steal_popular_tweets_from_search("#BoycottNobleFoods", 1)
-		sleep_until_next_action()
-		cat_bot.tweet_cat_image()
-		sleep_until_next_action()
-		bot.steal_popular_tweets_from_search("#BritanniaCruelty", 1)
-		sleep_until_next_action()
-		bot.steal_popular_tweets_from_search("#BoycottBritannia", 1)
-		sleep_until_next_action()
+			
+def get_bot_functions(bot, cat_bot):
+	return [
+		bot.steal_popular_tweets_from_search, 
+		bot.favourite_random_tweets_from_search, 
+		bot.retweet_random_tweets_from_search,
+		cat_bot.tweet_cat_image
+	]
 		
-		
+def get_search_terms():
+	return [
+		"#BritanniaCruelty", 
+		"#BoycottBritannia",
+		"#BoycottNobleFoods",
+		"#NotSoNoble"
+	]
 
 def sleep_until_next_action():
 	sleep_time = randint(MINUMUM_SLEEP_IN_SECONDS,MAXIMUM_SLEEP_IN_SECONDS)

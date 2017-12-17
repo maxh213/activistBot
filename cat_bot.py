@@ -39,7 +39,7 @@ class Cat_bot:
 	def get_message_of_adoration(self):
 		return random.choice(self.adjectives)
 
-	def tweet_cat_image(self):
+	def tweet_cat_image(self, _):
 		try: 
 			cat = self.get_png_cat_image()
 			message = self.get_message_of_adoration()
