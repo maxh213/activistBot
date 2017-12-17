@@ -1,6 +1,5 @@
 import tweepy
 import random
-from log_bot import Log_bot
 from secret_constants import *
 from bot_configs import Bot_configs
 from bot import Bot
@@ -10,26 +9,26 @@ from random import randint
 from time import sleep
 
 MINUMUM_SLEEP_IN_SECONDS = 5
-MAXIMUM_SLEEP_IN_SECONDS = 5#21600 #6 hours
+MAXIMUM_SLEEP_IN_SECONDS = 21600 #6 hours
 
 def main():
 	bot_configs = Bot_configs(consumer_key, consumer_key_secret, access_token, access_token_secret)
-	bot, cat_bot, log_bot = create_bots(bot_configs)
-	
+	bot, cat_bot = create_bots(bot_configs)
+
+
 
 def run_on_server():
 	print("Starting Bot...")
 	bot_configs = Bot_configs(consumer_key, consumer_key_secret, access_token, access_token_secret)
-	bot, cat_bot, log_bot = create_bots(bot_configs)
+	bot, cat_bot = create_bots(bot_configs)
 	bot_functions = get_bot_functions(bot, cat_bot)
 	search_terms = get_search_terms()
 	print("Successfully created the bots...")
-	log_bot.send_log_dm("Starting!!")
 
 	while (True):
 		bot.follow_back_all_followers()
 		random.choice(bot_functions)(random.choice(search_terms))
-		sleep_until_next_action(log_bot)
+		sleep_until_next_action()
 			
 def get_bot_functions(bot, cat_bot):
 	return [
@@ -47,16 +46,14 @@ def get_search_terms():
 		"#NotSoNoble"
 	]
 
-def sleep_until_next_action(log_bot):
+def sleep_until_next_action():
 	sleep_time = randint(MINUMUM_SLEEP_IN_SECONDS,MAXIMUM_SLEEP_IN_SECONDS)
-	log_text = "Going to sleep for ", sleep_time, " seconds"
-	log_bot.send_log_dm(log_text)
+	print("Going to sleep for ", sleep_time, " seconds")
 	sleep(sleep_time)
 
 def create_bots(bot_configs):
 	api = get_api(bot_configs)
-	log_bot = Log_bot(api)
-	return Bot(api, log_bot), Cat_bot(api, log_bot), log_bot
+	return Bot(api), Cat_bot(api)
 
 def get_api(bot_configs):
 	auth = tweepy.OAuthHandler(bot_configs.get_consumer_key(), bot_configs.get_consumer_key_secret())
