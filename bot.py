@@ -8,6 +8,7 @@ class Bot:
 		self.api = api
 		self.CHANCE_OF_RETWEET = 0.05
 		self.CHANCE_OF_FAVOURITE = 0.2
+		self.TWEET_FREQUENCY_THRESHOLD = 1
 
 	def get_api(self):
 		return self.api
@@ -57,3 +58,34 @@ class Bot:
 		result = uniform(0, 1)
 		return result <= probability
 
+	def steal_popular_tweets_from_search(self, query):
+		status_counts = self.get_counts_of_popular_tweets(query)
+		for status_count in status_counts:
+			if status_count.get_count() > self.TWEET_FREQUENCY_THRESHOLD:
+				self.steal_tweet(status_count)
+
+	def steal_tweet(self, status_count):
+		try:
+			self.api.update_status(status_count.get_full_text(), in_reply_to_status_id=status_count.get_in_reply_to_status_id)
+			print("Tweeted: '", status_count.get_full_text(), "'")
+			if status_count.is_the_status_a_reply:
+				print("In reply to: '", self.api.get_status(status_count.get_in_reply_to_status_id().text) ,"'")
+		except:
+			pass
+			#probs already tweeted this tweet
+			#it's a pain to check through all your tweets to see if you've tweeted it before btw
+
+	def get_counts_of_popular_tweets(self, query):
+		status_counts = []
+		for searchResult in self.api.search(query, tweet_mode="extended"):
+			new_status_count = Status_count(self.api, searchResult.full_text, searchResult.full_text, searchResult.in_reply_to_status_id)
+			if not self.does_new_status_count_exist_in_status_counts(new_status_count, status_counts):
+				status_counts.append(new_status_count)
+		return status_counts
+
+	def does_new_status_count_exist_in_status_counts(self, new_status_count, status_counts):
+		for status_count in status_counts:
+			if status_count.get_match_text() == new_status_count.get_match_text():
+				status_count.increment_count()
+				return True
+		return False
