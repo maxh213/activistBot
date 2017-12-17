@@ -40,10 +40,9 @@ class Cat_bot:
 		return random.choice(self.adjectives)
 
 	def tweet_cat_image(self, _):
-		try: 
-			cat = self.get_png_cat_image()
-			message = self.get_message_of_adoration()
-			self.api.update_with_media(filename=cat, status=message)
-			print("Tweeted a cat picture with the message: '", message, "'")
-		except:
-			pass
+		 
+		cat = self.get_png_cat_image()
+		message = self.get_message_of_adoration()
+		self.api.update_with_media(filename=cat, status=message)
+		print("Tweeted a cat picture with the message: '", message, "'")
+	
