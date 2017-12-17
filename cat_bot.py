@@ -3,8 +3,9 @@ import random
 
 class Cat_bot:
 
-	def __init__(self, api):
+	def __init__(self, api, log_bot):
 		self.api = api
+		self.log_bot = log_bot
 		self.filename = "tmpcat"
 		self.directory = "tmp/cats/"
 		self.adjectives = [
@@ -44,6 +45,7 @@ class Cat_bot:
 			cat = self.get_png_cat_image()
 			message = self.get_message_of_adoration()
 			self.api.update_with_media(filename=cat, status=message)
-			print("Tweeted a cat picture with the message: '", message, "'")
+			log_text = "Tweeted a cat picture with the message: '", message, "'"
+			self.log_bot.send_log_dm(log_text)
 		except:
 			pass
