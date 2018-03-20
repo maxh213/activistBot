@@ -8,7 +8,7 @@ class Bot:
 		self.api = api
 		self.CHANCE_OF_RETWEET = 0.05
 		self.CHANCE_OF_FAVOURITE = 0.2
-		self.TWEET_FREQUENCY_THRESHOLD = 1
+		self.TWEET_FREQUENCY_THRESHOLD = 2
 
 	def get_api(self):
 		return self.api
@@ -61,7 +61,7 @@ class Bot:
 	def steal_popular_tweets_from_search(self, query):
 		status_counts = self.get_counts_of_popular_tweets(query)
 		for status_count in status_counts:
-			if status_count.get_count() > self.TWEET_FREQUENCY_THRESHOLD:
+			if status_count.get_count() < self.TWEET_FREQUENCY_THRESHOLD:
 				self.steal_tweet(status_count)
 
 	def steal_tweet(self, status_count):
@@ -78,10 +78,16 @@ class Bot:
 	def get_counts_of_popular_tweets(self, query):
 		status_counts = []
 		for searchResult in self.api.search(query, tweet_mode="extended"):
-			new_status_count = Status_count(self.api, searchResult.full_text, searchResult.full_text, searchResult.in_reply_to_status_id)
+			new_status_count = Status_count(self.api, searchResult.full_text, self.get_full_text_from_status(searchResult), searchResult.in_reply_to_status_id)
 			if not self.does_new_status_count_exist_in_status_counts(new_status_count, status_counts):
 				status_counts.append(new_status_count)
 		return status_counts
+
+	def get_full_text_from_status(self, status):
+		if 'retweeted_status' in dir(status):
+			return status.retweeted_status.full_text
+		else:
+			return status.full_text
 
 	def does_new_status_count_exist_in_status_counts(self, new_status_count, status_counts):
 		for status_count in status_counts:

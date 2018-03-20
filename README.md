@@ -4,8 +4,7 @@ kind of an experiment in passing a turing test but also helping out animals at t
 
 # TODO:
 * retweet/fave from timeline list
-* retweet/fave from search term #BoycottNobleFoods #BritanniaCruelty #BoycottBritannia #NotSoNobel
-* DM me the log outputs when running
+* EMAIL me the log outputs when running
 * create a campaign object
 * create a target object
 * improve sentence structure on the cat images

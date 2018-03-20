@@ -8,14 +8,13 @@ from sys import argv
 from random import randint
 from time import sleep
 
-MINUMUM_SLEEP_IN_SECONDS = 5
-MAXIMUM_SLEEP_IN_SECONDS = 21600 #6 hours
+MINUMUM_SLEEP_IN_SECONDS = 21600 / 2 #3 hours
+MAXIMUM_SLEEP_IN_SECONDS = 21600 * 2 #12 hours
 
 def main():
 	bot_configs = Bot_configs(consumer_key, consumer_key_secret, access_token, access_token_secret)
 	bot, cat_bot = create_bots(bot_configs)
-
-
+	bot.steal_popular_tweets_from_search("#vegan")
 
 def run_on_server():
 	print("Starting Bot...")
@@ -40,10 +39,7 @@ def get_bot_functions(bot, cat_bot):
 		
 def get_search_terms():
 	return [
-		"#BritanniaCruelty", 
-		"#BoycottBritannia",
-		"#BoycottNobleFoods",
-		"#NotSoNoble"
+		"" #no active campaigns
 	]
 
 def sleep_until_next_action():
