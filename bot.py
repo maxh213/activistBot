@@ -9,6 +9,8 @@ class Bot:
 		self.CHANCE_OF_RETWEET = 0.05
 		self.CHANCE_OF_FAVOURITE = 0.2
 		self.TWEET_FREQUENCY_THRESHOLD = 2
+		self.ACCOUNT_NAME = "animal_lover_94"
+		self.RETWEET_LIST = "saferetweets"
 
 	def get_api(self):
 		return self.api
@@ -39,9 +41,15 @@ class Bot:
 					pass
 					#The .favourited (to check if already favourited) in search results just flat out don't work so just let it fail
 
-
-	def retweet_random_tweets_from_home_timeline(self):
+	def retweet_random_tweets_from_home_timeline(self, _):
 		statuses = self.api.home_timeline()
+		for status in statuses:
+			if self.should_do_action_based_on_probablity(self.CHANCE_OF_RETWEET) and not status.retweeted:
+				self.api.retweet(status.id)
+				print ("Retweeted: '", status.text, "' from the user: ", status.user.screen_name)
+
+	def retweet_random_tweets_from_list_timeline(self):
+		statuses = self.api.list_timeline(self.ACCOUNT_NAME, self.RETWEET_LIST)
 		for status in statuses:
 			if self.should_do_action_based_on_probablity(self.CHANCE_OF_RETWEET) and not status.retweeted:
 				self.api.retweet(status.id)

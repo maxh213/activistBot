@@ -8,13 +8,13 @@ from sys import argv
 from random import randint
 from time import sleep
 
-MINUMUM_SLEEP_IN_SECONDS = 21600 / 2 #3 hours
-MAXIMUM_SLEEP_IN_SECONDS = 21600 * 2 #12 hours
+MINUMUM_SLEEP_IN_SECONDS = 21600 #6 hours
+MAXIMUM_SLEEP_IN_SECONDS = 21600 * 4 #24 hours
 
 def main():
 	bot_configs = Bot_configs(consumer_key, consumer_key_secret, access_token, access_token_secret)
 	bot, cat_bot = create_bots(bot_configs)
-	bot.steal_popular_tweets_from_search("#vegan")
+	bot.retweet_random_tweets_from_list_timeline("animal_lover_94", "saferetweets")
 
 def run_on_server():
 	print("Starting Bot...")
@@ -31,9 +31,10 @@ def run_on_server():
 			
 def get_bot_functions(bot, cat_bot):
 	return [
-		bot.steal_popular_tweets_from_search, 
-		bot.favourite_random_tweets_from_search, 
-		bot.retweet_random_tweets_from_search,
+		#bot.steal_popular_tweets_from_search, 
+		#bot.favourite_random_tweets_from_search, 
+		#bot.retweet_random_tweets_from_search,
+		bot.retweet_random_tweets_from_list_timeline,
 		cat_bot.tweet_cat_image
 	]
 		
