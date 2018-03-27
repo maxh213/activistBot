@@ -48,7 +48,7 @@ class Bot:
 				self.api.retweet(status.id)
 				print ("Retweeted: '", status.text, "' from the user: ", status.user.screen_name)
 
-	def retweet_random_tweets_from_list_timeline(self):
+	def retweet_random_tweets_from_list_timeline(self, _):
 		statuses = self.api.list_timeline(self.ACCOUNT_NAME, self.RETWEET_LIST)
 		for status in statuses:
 			if self.should_do_action_based_on_probablity(self.CHANCE_OF_RETWEET) and not status.retweeted:
