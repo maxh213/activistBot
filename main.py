@@ -8,8 +8,8 @@ from sys import argv
 from random import randint
 from time import sleep
 
-MINUMUM_SLEEP_IN_SECONDS = 21600 #6 hours
-MAXIMUM_SLEEP_IN_SECONDS = 21600 * 4 #24 hours
+MINUMUM_SLEEP_IN_SECONDS = 21600 / 6 #1 hours
+MAXIMUM_SLEEP_IN_SECONDS = 21600 * 2 #12 hours
 
 def main():
 	bot_configs = Bot_configs(consumer_key, consumer_key_secret, access_token, access_token_secret)

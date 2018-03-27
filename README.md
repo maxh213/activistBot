@@ -12,5 +12,5 @@ kind of an experiment in passing a turing test but also helping out animals at t
 * add generic interests and make it tweet / steal tweets about them
 * double check the in reply to functionality
 * auto reply when certain accounts tweet
-	** all the time
-	** some of the time
+⋅⋅* all the time
+⋅⋅* some of the time
