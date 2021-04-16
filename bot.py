@@ -1,5 +1,7 @@
 import tweepy
-from random import *
+from tweepy import Cursor
+from random import uniform
+from time import sleep
 from status_count import Status_count
 
 class Bot:
@@ -9,17 +11,39 @@ class Bot:
 		self.CHANCE_OF_RETWEET = 0.05
 		self.CHANCE_OF_FAVOURITE = 0.2
 		self.TWEET_FREQUENCY_THRESHOLD = 2
-		self.ACCOUNT_NAME = "animal_lover_94"
-		self.RETWEET_LIST = "saferetweets"
 
 	def get_api(self):
 		return self.api
 
-	def follow_back_all_followers(self):
+	def follow_back_followers(self, max_amount=3):
+		count = 0
 		for follower in tweepy.Cursor(self.api.followers).items():
 			if not follower.following and not follower.protected:
 				follower.follow()
 				print ("Just followed: ", follower.screen_name)
+				count = count + 1
+				if count == max_amount: 
+					return
+			else:
+				print("skipping " + follower + " because they're already followed.")
+
+		
+	def follow_followers_of_account(self, _, max_amount=3):
+		count = 0
+		for follower in Cursor(self.api.followers, screen_name="OpenCagesUK").items():
+			if not follower.following and not follower.protected:
+				try: 	
+					self.api.create_friendship(follower.screen_name)
+					print("Followed: " + follower.screen_name)
+				except: 
+					print("Couldn't follow: " + follower.screen_name)
+					pass
+				count = count + 1
+				if count == max_amount: 
+					return
+				sleep(1)
+			else:
+				print("skipping " + follower + " because they're already followed.")
 
 	def retweet_random_tweets_from_search(self, query):
 		for searchResult in self.api.search(query, tweet_mode="extended"):
@@ -43,13 +67,6 @@ class Bot:
 
 	def retweet_random_tweets_from_home_timeline(self, _):
 		statuses = self.api.home_timeline()
-		for status in statuses:
-			if self.should_do_action_based_on_probablity(self.CHANCE_OF_RETWEET) and not status.retweeted:
-				self.api.retweet(status.id)
-				print ("Retweeted: '", status.text, "' from the user: ", status.user.screen_name)
-
-	def retweet_random_tweets_from_list_timeline(self, _):
-		statuses = self.api.list_timeline(self.ACCOUNT_NAME, self.RETWEET_LIST)
 		for status in statuses:
 			if self.should_do_action_based_on_probablity(self.CHANCE_OF_RETWEET) and not status.retweeted:
 				self.api.retweet(status.id)

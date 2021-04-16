@@ -1,5 +1,6 @@
-import cat
-import random
+import requests
+from random import choice
+import os
 
 class Cat_bot:
 
@@ -8,6 +9,9 @@ class Cat_bot:
 		self.filename = "tmpcat"
 		self.directory = "tmp/cats/"
 		self.adjectives = [
+			"Such a cute kitty!!",
+			"mlem",
+			"cat go brr",
 			"adorable",
 			"adorbs",
 			"lovable",  
@@ -32,18 +36,22 @@ class Cat_bot:
 			"stupidly fluffy",
 			"furball"
 		]
-		
-	def get_png_cat_image(self):
-		return cat.getCat(directory=self.directory, filename=self.filename, format='png')
-
-	def get_message_of_adoration(self):
-		return random.choice(self.adjectives)
 
 	def tweet_cat_image(self, _):
 		try: 
-			cat = self.get_png_cat_image()
+			url = 'https://api.thecatapi.com/v1/images/search'
+			result = requests.get(url)[0]['url']
+			filename = 'temp.jpg'
+			with open(filename, 'wb') as image:
+				for chunk in result:
+					image.write(chunk)
+
 			message = self.get_message_of_adoration()
-			self.api.update_with_media(filename=cat, status=message)
+			self.api.update_with_media(filename, status=message)
+			os.remove(filename)
 			print("Tweeted a cat picture with the message: '", message, "'")
 		except:
-			pass
+			print("Failed to tweet a cat picture with the message: '", message, "'")
+
+	def get_message_of_adoration(self):
+		return choice(self.adjectives)	

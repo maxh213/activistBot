@@ -1,90 +1,59 @@
 import tweepy
 import random
-from secret_constants import *
-from bot_configs import Bot_configs
+import os
+
+from waitress import serve
+from flask import Flask, render_template, jsonify, request, send_from_directory, send_file, Response
+
+from bot_factory import Bot_Factory
 from bot import Bot
 from cat_bot import Cat_bot
+from bot_v2 import Botv2
 from sys import argv
 from random import randint
 from time import sleep
+from flask_cors import CORS
 
-MINUMUM_SLEEP_IN_SECONDS = 21600 / 6 #1 hours
-MAXIMUM_SLEEP_IN_SECONDS = 21600 * 2 #12 hours
+app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
 
-def main():
-	bot_configs = Bot_configs(consumer_key, consumer_key_secret, access_token, access_token_secret)
-	bot, cat_bot = create_bots(bot_configs)
-	#bot.retweet_random_tweets_from_list_timeline("")
-	#follow_followers_of_account(bot.get_api(), "herbivore_club")
-
-def follow_followers_of_account(api, account_name):
-	for i in range(1, 1200):
-		followers = api.followers("herbivore_club", cursor=i-2)
-		print(followers)
-		for j in range(0, len(followers[0])):
-			try: 	
-				print(followers[0][j].screen_name)
-				api.create_friendship(followers[0][j].screen_name)
-			except: 
-				print("Couldn't follow: " + followers[0][j].screen_name)
-				pass
-		sleep(5)
-		print(i)
-	print("done")
-
-def run_on_server():
-	print("Starting Bot...")
-	bot_configs = Bot_configs(consumer_key, consumer_key_secret, access_token, access_token_secret)
-	bot, cat_bot = create_bots(bot_configs)
-	bot_functions = get_bot_functions(bot, cat_bot)
-	search_terms = get_search_terms()
-	print("Successfully created the bots...")
-
-	while (True):
-		bot.follow_back_all_followers()
-		random.choice(bot_functions)(random.choice(search_terms))
-		sleep_until_next_action()
-			
-def get_bot_functions(bot, cat_bot):
+CONSUMER_KEY = os.getenv('CONSUMER_KEY')
+CONSUMER_KEY_SECRET = os.getenv('CONSUMER_KEY_SECRET')
+ACCESS_TOKEN = os.getenv('ACCESS_TOKEN')
+ACCESS_TOKEN_SECRET = os.getenv('ACCESS_TOKEN_SECRET')
+bot_factory = Bot_Factory(CONSUMER_KEY, CONSUMER_KEY_SECRET, ACCESS_TOKEN, ACCESS_TOKEN_SECRET)
+bot, cat_bot, bot_v2 = bot_factory.create_bots()
+def get_bot_functions():
 	return [
-		bot.steal_popular_tweets_from_search, 
+		#bot.steal_popular_tweets_from_search, 
 		bot.favourite_random_tweets_from_search, 
 		bot.retweet_random_tweets_from_search,
-		bot.retweet_random_tweets_from_list_timeline,
-		cat_bot.tweet_cat_image
+		cat_bot.tweet_cat_image,
+		bot_v2.tweet_trash_at_company,
+		bot.follow_followers_of_account
 	]
-		
 def get_search_terms():
 	return [
-		"#DontTrustRonald",
-		"#ImNotLovinIt" 
+		"#MorrisonsMisery"
 	]
+bot_functions = get_bot_functions()
+search_terms = get_search_terms()
 
-def sleep_until_next_action():
-	sleep_time = randint(MINUMUM_SLEEP_IN_SECONDS,MAXIMUM_SLEEP_IN_SECONDS)
-	print("Going to sleep for ", sleep_time, " seconds")
-	sleep(sleep_time)
+@app.route('/health', methods=['GET'])
+def health_check():
+    return jsonify({'status': 'OK'})
 
-def create_bots(bot_configs):
-	api = get_api(bot_configs)
-	return Bot(api), Cat_bot(api)
-
-def get_api(bot_configs):
-	auth = tweepy.OAuthHandler(bot_configs.get_consumer_key(), bot_configs.get_consumer_key_secret())
-	auth.set_access_token(bot_configs.get_access_token(), bot_configs.get_access_token_secret())
-	api = tweepy.API(auth)
-	return api
-
-def parse_args(args: str) -> bool:
-	running_on_server = False
-	for arg in args:
-		if arg.lower() == 'true':
-			running_on_server = True
-	return running_on_server
-
-if __name__ == "__main__":
-	running_on_server = parse_args(argv[1:])
-	if running_on_server:
-		run_on_server()
-	else:
-		main()
+@app.route('/act', methods=['GET'])
+def run():
+	#bot.follow_back_followers(5)
+	#random.choice(bot_functions)(random.choice(search_terms))
+	#bot.favourite_random_tweets_from_search("#MorrisonsMisery")
+	bot.follow_followers_of_account("#MorrisonsMisery")
+	#bot.retweet_random_tweets_from_search("#MorrisonsMisery")
+	#cat_bot.tweet_cat_image("#MorrisonsMisery")
+	#bot_v2.tweet_trash_at_company("#MorrisonsMisery")
+	return jsonify({'status': 'Complete'})
+			
+if __name__ == '__main__':
+    serve(app, port=8080)
