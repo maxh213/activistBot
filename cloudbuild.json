@@ -30,7 +30,7 @@
           "managed",
           "--allow-unauthenticated"
         ]
-      }
+      },
       {
         "name": "gcr.io/cloud-builders/gcloud",
         "args": [
@@ -45,7 +45,7 @@
           "managed",
           "--allow-unauthenticated"
         ]
-      }
+      },
       {
         "name": "gcr.io/cloud-builders/gcloud",
         "args": [
