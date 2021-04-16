@@ -30,6 +30,66 @@
           "managed",
           "--allow-unauthenticated"
         ]
+      },
+      {
+        "name": "gcr.io/cloud-builders/gcloud",
+        "args": [
+          "run",
+          "deploy",
+          "$REPO_NAME-$BRANCH_NAME-1",
+          "--image",
+          "gcr.io/thl-uk/$REPO_NAME:$COMMIT_SHA",
+          "--region",
+          "europe-west1",
+          "--platform",
+          "managed",
+          "--allow-unauthenticated"
+        ]
+      },
+      {
+        "name": "gcr.io/cloud-builders/gcloud",
+        "args": [
+          "run",
+          "deploy",
+          "$REPO_NAME-$BRANCH_NAME-2",
+          "--image",
+          "gcr.io/thl-uk/$REPO_NAME:$COMMIT_SHA",
+          "--region",
+          "europe-west1",
+          "--platform",
+          "managed",
+          "--allow-unauthenticated"
+        ]
+      },
+      {
+        "name": "gcr.io/cloud-builders/gcloud",
+        "args": [
+          "run",
+          "deploy",
+          "$REPO_NAME-$BRANCH_NAME-3",
+          "--image",
+          "gcr.io/thl-uk/$REPO_NAME:$COMMIT_SHA",
+          "--region",
+          "europe-west1",
+          "--platform",
+          "managed",
+          "--allow-unauthenticated"
+        ]
+      },
+      {
+        "name": "gcr.io/cloud-builders/gcloud",
+        "args": [
+          "run",
+          "deploy",
+          "$REPO_NAME-$BRANCH_NAME-4",
+          "--image",
+          "gcr.io/thl-uk/$REPO_NAME:$COMMIT_SHA",
+          "--region",
+          "europe-west1",
+          "--platform",
+          "managed",
+          "--allow-unauthenticated"
+        ]
       }
     ],
     "images": [

@@ -49,10 +49,10 @@ def run():
 	#bot.follow_back_followers(5)
 	#random.choice(bot_functions)(random.choice(search_terms))
 	#bot.favourite_random_tweets_from_search("#MorrisonsMisery")
-	bot.follow_followers_of_account("#MorrisonsMisery")
+	#bot.follow_followers_of_account("#MorrisonsMisery")
 	#bot.retweet_random_tweets_from_search("#MorrisonsMisery")
 	#cat_bot.tweet_cat_image("#MorrisonsMisery")
-	#bot_v2.tweet_trash_at_company("#MorrisonsMisery")
+	bot_v2.tweet_trash_at_company("#MorrisonsMisery")
 	return jsonify({'status': 'Complete'})
 			
 if __name__ == '__main__':
